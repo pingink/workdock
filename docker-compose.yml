@@ -191,11 +191,64 @@ services:
           - PUID=${PHP_FPM_PUID}
           - PGID=${PHP_FPM_PGID}
           - LOCALE=${PHP_FPM_DEFAULT_LOCALE}
+          - INSTALL_BZ2=true
+          - INSTALL_GMP=true
+          - INSTALL_XDEBUG=true
+          - INSTALL_PCOV=true
+          - INSTALL_PHPDBG=true
+          - INSTALL_BLACKFIRE=true
+          - INSTALL_SSH2=true
+          - INSTALL_SOAP=true
+          - INSTALL_XSL=true
+          - INSTALL_SMB=true
+          - INSTALL_IMAP=true
+          - INSTALL_MONGO=true
+          - INSTALL_AMQP=true
+          - INSTALL_CASSANDRA=true
+          - INSTALL_GEARMAN=true
+          - INSTALL_MSSQL=true
+          - INSTALL_BCMATH=true
+          - INSTALL_PHPREDIS=true
+          - INSTALL_MEMCACHED=true
+          - INSTALL_OPCACHE=true
+          - INSTALL_EXIF=true
+          - INSTALL_AEROSPIKE=true
+          - INSTALL_OCI8=true
+          - INSTALL_MYSQLI=true
+          - INSTALL_PGSQL=true
+          - INSTALL_PG_CLIENT=true
+          - INSTALL_POSTGIS=true
+          - INSTALL_INTL=true
+          - INSTALL_GHOSTSCRIPT=true
+          - INSTALL_LDAP=true
+          - INSTALL_PHALCON=true
+          - INSTALL_SWOOLE=true
+          - INSTALL_TAINT=true
+          - INSTALL_IMAGE_OPTIMIZERS=true
+          - INSTALL_IMAGEMAGICK=true
+          - INSTALL_CALENDAR=true
+          - INSTALL_FAKETIME=true
+          - INSTALL_IONCUBE=true
+          - INSTALL_APCU=true
+          - INSTALL_CACHETOOL=true
+          - INSTALL_YAML=true
+          - INSTALL_RDKAFKA=true
+          - INSTALL_GETTEXT=true
+          - INSTALL_ADDITIONAL_LOCALES=true
+          - INSTALL_MYSQL_CLIENT=true
+          - INSTALL_PING=true
+          - INSTALL_SSHPASS=true
+          - INSTALL_MAILPARSE=true
+          - INSTALL_PCNTL=true
+          - INSTALL_FFMPEG=true
+          - INSTALL_WKHTMLTOPDF=true
+          - INSTALL_XHPROF=true
+          - INSTALL_XMLRPC=true
           - http_proxy
           - https_proxy
           - no_proxy
       volumes:
-        - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+        - ./php-fpm/php7.1.ini:/usr/local/etc/php/php.ini
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - docker-in-docker:/certs/client
       expose:
@@ -402,7 +455,6 @@ services:
         - "${VARNISH_BACKEND_PORT}:81"
       depends_on:
         - php-fpm
-      links:
         - php-fpm-zzc
       networks:
         - frontend
