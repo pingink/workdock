@@ -1,2 +1,2 @@
 docker-compose up -d nginx
-docker-compose exec workspace bash
+docker-compose exec nginx bash

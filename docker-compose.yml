@@ -13,19 +13,42 @@ services:
   nginx:
     build:
       context: ./nginx
-#      args:
     volumes:
-      - /srv/project/:/var/www
+      - /srv/project/:/srv/project
       - ./nginx/log/:/var/log/nginx
-      - ./nginx/vhosts:/etc/nginx/vhosts
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
     ports:
-      - "8888:80"
-#    expose:
-#    extra_hosts:
-#    environment:
-#    depends_on:
+      - "80:80"
+    depends_on:
+      - php71
+      - php74
     networks:
       - frontend
       - backend
-#    links:
+    links:
+      - php71
+      - php74
+  php71:
+    build:
+      context: ./php71
+    volumes:
+      - /srv/project/:/srv/project
+      - ./php71/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./php71/conf.d/php.ini:/usr/local/etc/php/conf.d/php.ini
+    ports:
+      - "9071:9000"
+    networks:
+      - frontend
+      - backend
+  php74:
+    build:
+      context: ./php74
+    volumes:
+      - /srv/project/:/srv/project
+      - ./php74/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    ports:
+      - "9074:9000"
+    networks:
+      - frontend
+      - backend
