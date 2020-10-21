@@ -4,13 +4,29 @@ FROM php:${PHP_VERSION}-fpm
 
 LABEL maintainer="pingink <pingink@163.com>"
 
-RUN apt-get update && apt-get install --yes zip unzip
+# base
+RUN rm -rf /usr/local/etc/php-fpm.d/www.conf
+RUN docker-php-ext-install mysqli pdo pdo_mysql opcache bcmath mbstring
+
+# zip
+RUN apt-get update -y && apt-get install -y \
+    libzip-dev \
+    unzip \
+  && docker-php-ext-install zip
+
+#gd
+RUN apt-get update -y && apt-get install -y \
+    zlib1g-dev \
+    libxpm-dev \
+    libwebp-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libfreetype6-dev \
+  && docker-php-ext-configure gd --with-gd --with-webp-dir --with-jpeg-dir --with-png-dir --with-zlib-dir --with-xpm-dir --with-freetype-dir --enable-gd-native-ttf \
+  && docker-php-ext-install gd
+
+# composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer && chmod u+x /usr/bin/composer && composer config -g repo.packagist composer https://packagist.phpcomposer.com
-ADD src/php-${PHP_VERSION}.tar.gz /var
-RUN docker-php-ext-install pdo pdo_mysql &&\
-    cd /var/php-${PHP_VERSION}/ext/bcmath && /usr/local/bin/phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install &&\
-    rm -rf /var/php-${PHP_VERSION} &&\
-    rm -rf /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9000
 
