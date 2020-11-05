@@ -13,32 +13,20 @@ services:
     build:
       context: ./postgres
       args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - POSTGRES_VERSION=alpine
     volumes:
-      - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
-      - ${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - GITLAB_POSTGRES_INIT=${GITLAB_POSTGRES_INIT}
-      - GITLAB_POSTGRES_USER=${GITLAB_POSTGRES_USER}
-      - GITLAB_POSTGRES_PASSWORD=${GITLAB_POSTGRES_PASSWORD}
-      - GITLAB_POSTGRES_DB=${GITLAB_POSTGRES_DB}
-      - JUPYTERHUB_POSTGRES_INIT=${JUPYTERHUB_POSTGRES_INIT}
-      - JUPYTERHUB_POSTGRES_USER=${JUPYTERHUB_POSTGRES_USER}
-      - JUPYTERHUB_POSTGRES_PASSWORD=${JUPYTERHUB_POSTGRES_PASSWORD}
-      - JUPYTERHUB_POSTGRES_DB=${JUPYTERHUB_POSTGRES_DB}
-      - SONARQUBE_POSTGRES_INIT=${SONARQUBE_POSTGRES_INIT}
-      - SONARQUBE_POSTGRES_DB=${SONARQUBE_POSTGRES_DB}
-      - SONARQUBE_POSTGRES_USER=${SONARQUBE_POSTGRES_USER}
-      - SONARQUBE_POSTGRES_PASSWORD=${SONARQUBE_POSTGRES_PASSWORD}
-      - POSTGRES_CONFLUENCE_INIT=${CONFLUENCE_POSTGRES_INIT}
-      - POSTGRES_CONFLUENCE_DB=${CONFLUENCE_POSTGRES_DB}
-      - POSTGRES_CONFLUENCE_USER=${CONFLUENCE_POSTGRES_USER}
-      - POSTGRES_CONFLUENCE_PASSWORD=${CONFLUENCE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=test
+      - POSTGRES_USER=workdock
+      - POSTGRES_PASSWORD=workdock
+      - GITLAB_POSTGRES_INIT=true
+      - GITLAB_POSTGRES_USER=workdock
+      - GITLAB_POSTGRES_PASSWORD=workdock
+      - GITLAB_POSTGRES_DB=workdock_gitlab
     networks:
       - backend
 
@@ -48,7 +36,7 @@ services:
       context: ./gitlab
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url '${GITLAB_DOMAIN_NAME}'
+        external_url 'http://gitlab.pingink.local'
         redis['enable'] = false
         nginx['listen_https'] = false
         nginx['listen_port'] = 80
@@ -58,31 +46,30 @@ services:
         gitlab_rails['redis_host'] = 'redis'
         gitlab_rails['redis_database'] = 8
         gitlab_rails['db_host'] = 'postgres'
-        gitlab_rails['db_username'] = '${GITLAB_POSTGRES_USER}'
-        gitlab_rails['db_password'] = '${GITLAB_POSTGRES_PASSWORD}'
-        gitlab_rails['db_database'] = '${GITLAB_POSTGRES_DB}'
-        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
-        gitlab_rails['gitlab_shell_ssh_port'] = ${GITLAB_HOST_SSH_PORT}
+        gitlab_rails['db_username'] = 'workdock'
+        gitlab_rails['db_password'] = 'workdock'
+        gitlab_rails['db_database'] = 'gitlab'
+        gitlab_rails['initial_root_password'] = 'workdock'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2289
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/data:/var/opt/gitlab
       - ./gitlab/log:/var/log/gitlab
     ports:
-      - "80:80"
-      - "443:443"
-      - "22:22"
+      - "8090:80"
+      - "4443:443"
+      - "2222:22"
     networks:
       - backend
     depends_on:
-      - redis
       - postgres
   gitlab-runner:
     image: gitlab/gitlab-runner:latest
     environment:
-      - CI_SERVER_URL=${GITLAB_CI_SERVER_URL}
-      - REGISTRATION_TOKEN=${GITLAB_RUNNER_REGISTRATION_TOKEN}
-      - RUNNER_NAME=${COMPOSE_PROJECT_NAME}-runner
-      - REGISTER_NON_INTERACTIVE=${GITLAB_REGISTER_NON_INTERACTIVE}
+      - CI_SERVER_URL=http://localhost:8989
+      - REGISTRATION_TOKEN=workdock
+      - RUNNER_NAME=workdock-runner
+      - REGISTER_NON_INTERACTIVE=true
       - RUNNER_EXECUTOR=shell
     volumes:
       - ./gitlab/runner:/etc/gitlab-runner

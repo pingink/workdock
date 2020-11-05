@@ -39,7 +39,6 @@ services:
     ports:
       - "9071:9000"
     networks:
-      - frontend
       - backend
 
   ### php73 ################################################
@@ -52,7 +51,6 @@ services:
     ports:
       - "9073:9000"
     networks:
-      - frontend
       - backend
 
   ### php73-worker ################################################
@@ -75,7 +73,6 @@ services:
     ports:
       - "9074:9000"
     networks:
-      - frontend
       - backend
 
   ### elasticsearch ################################################
@@ -102,7 +99,6 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - frontend
       - backend
 
   ### redis ################################################
@@ -123,9 +119,9 @@ services:
         - MYSQL_VERSION=latest
     environment:
       - MYSQL_DATABASE=shop
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=zcp513
-      - MYSQL_ROOT_PASSWORD=zcp513
+      - MYSQL_USER=workdock
+      - MYSQL_PASSWORD=workdock
+      - MYSQL_ROOT_PASSWORD=workdock
       - TZ=UTC
     volumes:
       - ./mysql/data:/var/lib/mysql
@@ -144,8 +140,8 @@ services:
       - "15671:15671"
     privileged: true
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=workdock
+      - RABBITMQ_DEFAULT_PASS=workdock
     hostname: laradock-rabbitmq
     volumes:
       - ./rabbitmq/data:/var/lib/rabbitmq
