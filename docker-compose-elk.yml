@@ -1,0 +1,77 @@
+## ELK日志
+version: '3'
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+services:
+  ### redis ################################################
+  elk_redis:
+    build:
+      context: ./redis
+    ports:
+      - "6379:6389"
+    networks:
+      - frontend
+      - backend
+
+  ### logstash ################################################
+  elk_logstash:
+    build:
+      context: ./logstash
+      args:
+        - ELK_VERSION=7.5.1
+    volumes:
+      - './logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml'
+      - './logstash/pipeline:/usr/share/logstash/pipeline'
+    ports:
+      - '5001:5001'
+    environment:
+      LS_JAVA_OPTS: '-Xmx1g -Xms1g'
+    networks:
+      - frontend
+      - backend
+
+  ### elasticsearch ################################################
+  elasticsearch-elk:
+    build:
+      context: ./elasticsearch-elk
+      args:
+        - ELK_VERSION=7.5.1
+    volumes:
+      - ./elasticsearch-elk/data:/usr/share/elasticsearch/data
+    environment:
+      - cluster.name=workdock-cluster
+      - node.name=workdock-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.initial_master_nodes=workdock-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9202"
+    networks:
+      - frontend
+      - backend
+
+  ### kibana ################################################
+  kibana:
+    build:
+      context: ./kibana
+      args:
+        - ELK_VERSION=7.5.1
+    volumes:
+      - './kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml'
+    ports:
+      - "5601:5601"
+    networks:
+      - frontend
+      - backend

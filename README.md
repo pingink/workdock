@@ -1,9 +1,37 @@
 ## workdock
-web应用：Nginx + PHP
-日志系统：ELK
-中间件：MySQL, Mongo, RabbitMq, ES, Redis
-配置系统：apollo
-发布系统：gitlab, habor, k8s, walle
-监控系统：grafana, zabbix, consul, sonar
 
-集群
+#### web应用
+- nginx
+- php
+- mysql
+- mongo
+- rabbitmq
+- elasticsearch
+- redis
+
+#### 日志系统
+- redis
+- logstash
+- elasticsearch
+- kibana
+
+#### 持续集成
+- gitlab
+- harbor
+- k8s
+- walle
+- sonar
+
+#### 监控系统
+- grafana
+- zabbix
+
+#### 分布式
+- consul
+- apollo
+
+#### 集群
+- redis-cluster
+- es-cluster
+- mysql-cluster
+- mongo-cluster
