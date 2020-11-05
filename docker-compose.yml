@@ -20,13 +20,14 @@ services:
       - "80:80"
     depends_on:
       - php71
-      - php74
+      - php73
     networks:
       - frontend
       - backend
     links:
       - php71
-      - php74
+      - php73
+
   ### php71 ################################################
   php71:
     build:
@@ -40,6 +41,20 @@ services:
     networks:
       - frontend
       - backend
+
+  ### php73 ################################################
+  php73:
+    build:
+      context: ./php73
+    volumes:
+      - /srv/project/:/srv/project
+      - ./php73/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    ports:
+      - "9073:9000"
+    networks:
+      - frontend
+      - backend
+
   ### php74 ################################################
   php74:
     build:
@@ -52,14 +67,7 @@ services:
     networks:
       - frontend
       - backend
-  redis:
-    build:
-      context: ./redis
-    ports:
-      - "6379:6379"
-    networks:
-      - frontend
-      - backend
+
   ### logstash ################################################
   logstash:
     build:
@@ -76,6 +84,7 @@ services:
     networks:
       - frontend
       - backend
+
   ### elasticsearch ################################################
   elasticsearch:
     build:
@@ -102,6 +111,7 @@ services:
     networks:
       - frontend
       - backend
+
   ### kibana ################################################
   kibana:
     build:
@@ -115,6 +125,17 @@ services:
     networks:
       - frontend
       - backend
+
+  ### redis ################################################
+  redis:
+    build:
+      context: ./redis
+    ports:
+      - "6379:6379"
+    networks:
+      - frontend
+      - backend
+
   ### MySQL ################################################
   mysql:
     build:
@@ -134,3 +155,77 @@ services:
       - "3306:3306"
     networks:
       - backend
+
+  ### RabbitMQ #############################################
+  rabbitmq:
+    build: ./rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15671:15671"
+    privileged: true
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    hostname: laradock-rabbitmq
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq
+    networks:
+      - backend
+
+  ### MongoDB ##############################################
+  mongo:
+    build: ./mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo/data/db:/data/db
+      - ./mongo/data/config:/data/configdb
+    networks:
+      - backend
+
+  ### Gitlab ################################################
+  gitlab:
+    build:
+      context: ./gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_DOMAIN_NAME}'
+        redis['enable'] = false
+        nginx['listen_https'] = false
+        nginx['listen_port'] = 80
+        nginx['custom_gitlab_server_config'] = "set_real_ip_from 172.0.0.0/8;\nreal_ip_header X-Real-IP;\nreal_ip_recursive on;"
+        postgresql['enable'] = false
+        gitlab_rails['trusted_proxies'] = ['caddy','nginx','apache2']
+        gitlab_rails['redis_host'] = 'redis'
+        gitlab_rails['redis_database'] = 8
+        gitlab_rails['db_host'] = '${GITLAB_POSTGRES_HOST}'
+        gitlab_rails['db_username'] = '${GITLAB_POSTGRES_USER}'
+        gitlab_rails['db_password'] = '${GITLAB_POSTGRES_PASSWORD}'
+        gitlab_rails['db_database'] = '${GITLAB_POSTGRES_DB}'
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'
+        gitlab_rails['gitlab_shell_ssh_port'] = ${GITLAB_HOST_SSH_PORT}
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+      - ./gitlab/log:/var/log/gitlab
+    ports:
+      - "80:80"
+      - "443:443"
+      - "22:22"
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - postgres
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    environment:
+      - CI_SERVER_URL=${GITLAB_CI_SERVER_URL}
+      - REGISTRATION_TOKEN=${GITLAB_RUNNER_REGISTRATION_TOKEN}
+      - RUNNER_NAME=${COMPOSE_PROJECT_NAME}-runner
+      - REGISTER_NON_INTERACTIVE=${GITLAB_REGISTER_NON_INTERACTIVE}
+      - RUNNER_EXECUTOR=shell
+    volumes:
+      - ./gitlab/runner:/etc/gitlab-runner
+      - ./gitlab/runner/run/docker.sock:/var/run/docker.sock:rw
