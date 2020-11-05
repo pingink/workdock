@@ -1,10 +1,8 @@
 ARG PHP_VERSION=7.3.24
 
-FROM php:${PHP_VERSION}-fpm
+FROM php:${PHP_VERSION}
 
 LABEL maintainer="pingink <pingink@163.com>"
-
-RUN rm -rf /usr/local/etc/php-fpm.d/www.conf
 
 ##ext: default, docker-php-ext-install, pecl,  configure && install
 
@@ -34,9 +32,10 @@ RUN apt-get update -y && apt-get install -y \
 # mongodb
 RUN pecl install mongodb && docker-php-ext-enable mongodb
 
-# composer
-RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer && chmod u+x /usr/bin/composer && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+# supervisor
+RUN apt-get install -y supervisor
+RUN rm -rf /etc/supervisord.conf
+COPY supervisord.conf /etc/supervisord.conf
 
-EXPOSE 9000
+CMD ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
 
-CMD ["php-fpm", "-R"]

@@ -55,6 +55,16 @@ services:
       - frontend
       - backend
 
+  ### php73-worker ################################################
+  php73-worker:
+    build:
+      context: ./php73-worker
+    volumes:
+      - /srv/project/:/srv/project
+      - ./php73-worker/supervisord.d/:/etc/supervisor/conf.d
+    networks:
+      - backend
+
   ### php74 ################################################
   php74:
     build:

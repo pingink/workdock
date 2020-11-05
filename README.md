@@ -2,7 +2,7 @@
 
 #### web应用
 - nginx
-- php
+- php (composer, supervisor)
 - mysql
 - mongo
 - rabbitmq

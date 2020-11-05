@@ -9,11 +9,11 @@ networks:
 
 services:
   ### redis ################################################
-  elk_redis:
+  redis-elk:
     build:
-      context: ./redis
+      context: ./redis-elk
     ports:
-      - "6379:6389"
+      - "6380:6379"
     networks:
       - frontend
       - backend
@@ -57,7 +57,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200:9202"
+      - "9201:9200"
     networks:
       - frontend
       - backend
