@@ -48,7 +48,7 @@ services:
         gitlab_rails['db_host'] = 'postgres'
         gitlab_rails['db_username'] = 'workdock'
         gitlab_rails['db_password'] = 'workdock'
-        gitlab_rails['db_database'] = 'gitlab'
+        gitlab_rails['db_database'] = 'workdock_gitlab'
         gitlab_rails['initial_root_password'] = 'workdock'
         gitlab_rails['gitlab_shell_ssh_port'] = 2289
     volumes:
@@ -74,3 +74,26 @@ services:
     volumes:
       - ./gitlab/runner:/etc/gitlab-runner
       - ./gitlab/runner/run/docker.sock:/var/run/docker.sock:rw
+
+  ### SONARQUBE ################################################
+  sonarqube:
+    build:
+      context: ./sonarqube
+    hostname: "sonar.pingink.local"
+    volumes:
+      - ./sonarqube/conf:/opt/sonarqube/conf
+      - ./sonarqube/data:/opt/sonarqube/data
+      - ./sonarqube/logs:/opt/sonarqube/logs
+      - ./sonarqube/extensions:/opt/sonarqube/extensions
+      - ./sonarqube/plugins:/opt/sonarqube/lib/bundled-plugins
+    ports:
+      - 9900:9000
+    depends_on:
+      - postgres
+    environment:
+      - sonar.jdbc.username=workdock
+      - sonar.jdbc.password=workdock
+      - sonar.jdbc.url=jdbc:postgresql://postgres:5432/workdock_sonarqube
+    networks:
+      - backend
+      - frontend
