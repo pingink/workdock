@@ -1,4 +1,3 @@
-## ELK日志
 version: '3'
 
 networks:
@@ -9,17 +8,17 @@ networks:
 
 services:
   ### redis ################################################
-  redis-elk:
+  elk-redis:
     build:
-      context: ./redis-elk
+      context: ./redis
     ports:
-      - "6380:6379"
+      - "6479:6379"
     networks:
       - frontend
       - backend
 
   ### logstash ################################################
-  elk_logstash:
+  elk-logstash:
     build:
       context: ./logstash
       args:
@@ -36,9 +35,9 @@ services:
       - backend
 
   ### elasticsearch ################################################
-  elasticsearch-elk:
+  elk-elasticsearch:
     build:
-      context: ./elasticsearch-elk
+      context: ./elasticsearch
       args:
         - ELK_VERSION=7.5.1
     volumes:
@@ -57,7 +56,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9201:9200"
+      - "9300:9200"
     networks:
       - frontend
       - backend
