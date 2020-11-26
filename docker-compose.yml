@@ -28,6 +28,7 @@ services:
       - php71
       - php73
 
+
   ### php71 ################################################
   php71:
     build:
@@ -36,8 +37,6 @@ services:
       - /srv/project/:/srv/project
       - ./php71/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ./php71/conf.d/php.ini:/usr/local/etc/php/conf.d/php.ini
-    ports:
-      - "9071:9000"
     networks:
       - backend
 
@@ -48,8 +47,6 @@ services:
     volumes:
       - /srv/project/:/srv/project
       - ./php73/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
-    ports:
-      - "9073:9000"
     networks:
       - backend
 
@@ -70,8 +67,6 @@ services:
     volumes:
       - /srv/project/:/srv/project
       - ./php74/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
-    ports:
-      - "9074:9000"
     networks:
       - backend
 

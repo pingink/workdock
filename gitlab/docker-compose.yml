@@ -1,4 +1,3 @@
-## 持续集成
 version: '3'
 
 networks:
@@ -9,7 +8,7 @@ networks:
 
 services:
   ### PostgreSQL ###########################################
-  postgres:
+  gitlab-postgres:
     build:
       context: ./postgres
       args:
@@ -17,8 +16,6 @@ services:
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-    ports:
-      - "5532:5432"
     environment:
       - POSTGRES_DB=test
       - POSTGRES_USER=workdock
@@ -27,6 +24,13 @@ services:
       - GITLAB_POSTGRES_USER=workdock
       - GITLAB_POSTGRES_PASSWORD=workdock
       - GITLAB_POSTGRES_DB=workdock_gitlab
+    networks:
+      - backend
+
+  ### redis ################################################
+  gitlab-redis:
+    build:
+      context: ./redis
     networks:
       - backend
 
@@ -43,9 +47,9 @@ services:
         nginx['custom_gitlab_server_config'] = "set_real_ip_from 172.0.0.0/8;\nreal_ip_header X-Real-IP;\nreal_ip_recursive on;"
         postgresql['enable'] = false
         gitlab_rails['trusted_proxies'] = ['caddy','nginx','apache2']
-        gitlab_rails['redis_host'] = 'redis'
-        gitlab_rails['redis_database'] = 8
-        gitlab_rails['db_host'] = 'postgres'
+        gitlab_rails['redis_host'] = 'gitlab-redis'
+        gitlab_rails['redis_database'] = 0
+        gitlab_rails['db_host'] = 'gitlab-postgres'
         gitlab_rails['db_username'] = 'workdock'
         gitlab_rails['db_password'] = 'workdock'
         gitlab_rails['db_database'] = 'workdock_gitlab'
@@ -56,13 +60,16 @@ services:
       - ./gitlab/data:/var/opt/gitlab
       - ./gitlab/log:/var/log/gitlab
     ports:
-      - "8080:80"
-      - "4443:443"
+      - "8090:80"
       - "2222:22"
     networks:
       - backend
+      - frontend
     depends_on:
-      - postgres
+      - gitlab-postgres
+      - gitlab-redis
+
+  ### Gitlab-runner ################################################
   gitlab-runner:
     image: gitlab/gitlab-runner:latest
     environment:

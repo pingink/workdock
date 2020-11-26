@@ -19,8 +19,8 @@
 - gitlab
 - harbor
 - k8s
-- walle
-- sonar
+- sonar*
+- walle*
 
 #### 监控系统
 - grafana
@@ -29,6 +29,7 @@
 #### 分布式
 - consul
 - apollo
+- zookeeper
 
 #### 集群
 - redis-cluster
