@@ -6,7 +6,7 @@ LABEL maintainer="pingink <pingink@163.com>"
 
 # base
 RUN rm -rf /usr/local/etc/php-fpm.d/www.conf
-RUN docker-php-ext-install mysqli pdo pdo_mysql opcache bcmath mbstring
+RUN docker-php-ext-install mysqli pdo pdo_mysql opcache bcmath mbstring sockets
 
 # zip
 RUN apt-get update -y && apt-get install -y \

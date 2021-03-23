@@ -153,3 +153,11 @@ services:
       - ./mongo/data/config:/data/configdb
     networks:
       - backend
+
+  ### ClickHouse ##############################################
+  click-house:
+    build: ./clickhouse
+    ports:
+      - "8123:8123"
+    networks:
+      - backend

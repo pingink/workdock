@@ -21,6 +21,7 @@
 - k8s
 - sonar*
 - walle*
+- docker
 
 #### 监控系统
 - grafana
@@ -36,3 +37,5 @@
 - es-cluster
 - mysql-cluster
 - mongo-cluster
+- rabbitmq-cluster
+
