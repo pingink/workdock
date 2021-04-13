@@ -137,7 +137,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=workdock
       - RABBITMQ_DEFAULT_PASS=workdock
-    hostname: laradock-rabbitmq
+    hostname: workdock-rabbitmq
     volumes:
       - ./rabbitmq/data:/var/lib/rabbitmq
     networks:
