@@ -36,16 +36,21 @@
 
 
 ## 命令
-1. 构建容器
 ```bash
-docker-compose build xxx
-```
+# 构建
+docker-compose build container-name
 
-2. 启动，关闭
-```bash
-docker-compose up xxx
-docker-compose up -d xxx
+# 启动
+docker-compose up container-name
+
+# deamon启动
+docker-compose up -d container-name
+
+# 关闭
 docker-compose down
+
+# 进入容器示例
+docker-compose exec container-name bash
 ```
 
 
