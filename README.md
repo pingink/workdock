@@ -1,5 +1,6 @@
-## workdock
+# workdock
 
+## 容器
 #### web应用
 - nginx
 - php (composer, supervisor)
@@ -8,6 +9,7 @@
 - rabbitmq
 - elasticsearch
 - redis
+- clickhouse
 
 #### 日志系统
 - redis
@@ -19,8 +21,8 @@
 - gitlab
 - harbor
 - k8s
-- sonar*
-- walle*
+- sonar
+- walle
 - docker
 
 #### 监控系统
@@ -32,10 +34,18 @@
 - apollo
 - zookeeper
 
-#### 集群
-- redis-cluster
-- es-cluster
-- mysql-cluster
-- mongo-cluster
-- rabbitmq-cluster
+
+## 命令
+1. 构建容器
+```bash
+docker-compose build xxx
+```
+
+2. 启动，关闭
+```bash
+docker-compose up xxx
+docker-compose up -d xxx
+docker-compose down
+```
+
 
