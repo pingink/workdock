@@ -155,7 +155,7 @@ services:
       - backend
 
   ### ClickHouse ##############################################
-  click-house:
+  clickhouse:
     build: ./clickhouse
     ports:
       - "8123:8123"
