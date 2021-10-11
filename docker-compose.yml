@@ -27,6 +27,7 @@ services:
     links:
       - php71
       - php73
+      - nodejs8
 
 
   ### php71 ################################################
@@ -163,3 +164,17 @@ services:
       - backend
 
   ### consul ##############################################
+
+
+  ### nodejs8 ##############################################
+  nodejs8:
+    build: ./nodejs8
+    ports:
+      - "8081:8081"
+    volumes:
+      - /srv/project/:/srv/project
+    networks:
+      - frontend
+      - backend
+    stdin_open: true
+    tty: true
